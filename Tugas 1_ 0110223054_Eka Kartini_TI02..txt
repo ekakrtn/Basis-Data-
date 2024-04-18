@@ -1,0 +1,796 @@
+Setting environment for using XAMPP for Windows.
+krtne@EKAKARTINI c:\xampp
+# mysql -u root -p
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 8
+Server version: 10.4.32-MariaDB mariadb.org binary distribution
+
+1.Buatlah database baru dengan nama: dbpegawai.
+
+MariaDB [(none)]> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| dbkuliah           |
+| dbkuliaheka        |
+| dbpuskesmas        |
+| dbti02             |
+| information_schema |
+| mysql              |
+| performance_schema |
+| phpmyadmin         |
+| test               |
++--------------------+
+9 rows in set (0.024 sec)
+
+MariaDB [(none)]> CREATE DATABASE dbpegawai2;
+Query OK, 1 row affected (0.002 sec)
+
+MariaDB [(none)]> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| dbkuliah           |
+| dbkuliaheka        |
+| dbpegawai2         |
+| dbpuskesmas        |
+| dbti02             |
+| information_schema |
+| mysql              |
+| performance_schema |
+| phpmyadmin         |
+| test               |
++--------------------+
+10 rows in set (0.001 sec)
+
+2. Masuk ke dbpegawai dengan perintah USE
+MariaDB [(none)]> USE dbpegawai2;
+Database changed
+
+3. Buatlah tabel baru dengan nama: divisi, dengan kolom-kolom sbb:
+id int primary key auto_increment
+nama varchar(30) dengan contraint: wajib diisi dan tidak boleh sama
+
+MariaDB [dbpegawai2]> CREATE TABLE  divisi (
+    -> id INT PRIMARY KEY AUTO_INCREMENT,
+    -> nama VARCHAR(30) NOT NULL UNIQUE );
+Query OK, 0 rows affected (0.026 sec)
+
+4. Tampilkan deskripsi tabel divisi
+
+MariaDB [dbpegawai2]> DESC divisi;
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nama  | varchar(30) | NO   | UNI | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+2 rows in set (0.013 sec)
+
+5. Buatlah tabel baru dengan nama: jabatan, dengan kolom-kolom sbb:
+id int primary key auto_increment
+nama varchar(30) dengan contraint: wajib diisi dan tidak boleh sama
+
+MariaDB [dbpegawai2]> CREATE TABLE jabatan (
+    -> id INT PRIMARY KEY AUTO_INCREMENT,
+    -> nama VARCHAR(30) NOT NULL UNIQUE);
+Query OK, 0 rows affected (0.029 sec)
+
+6. Tampilkan deskripsi tabel jabatan
+
+MariaDB [dbpegawai2]> DESC jabatan;
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nama  | varchar(30) | NO   | UNI | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+2 rows in set (0.015 sec)
+
+7. Buatlah tabel baru dengan nama: pegawai, dengan kolom-kolom sbb:
+id int primary key auto_increment
+nip char dengan constraint: wajib diisi, tidak boleh sama & 5 karakter
+nama varchar dengan constraint: wajib diisi dan maksimal 30 karakter
+gender enum('Laki-Laki','Perempuan') dengan constraint: wajib diisi
+tmp_lahir varchar dengan constraint: wajib diisi dan maksimal 30 karakter
+tgl_lahir date dengan constraint: wajib diisi
+iddivisi int sebagai foreign key, tidak boleh kosong, merujuk ke tabel divisi ke field id
+idjabatan int sebagai foreign key, tidak boleh kosong, merujuk ke tabel jabatan ke field id
+alamat text
+
+MariaDB [dbpegawai2]> CREATE TABLE pegawai (
+    -> id INT PRIMARY KEY AUTO_INCREMENT,
+    -> nip CHAR(5) NOT NULL UNIQUE,
+    -> nama VARCHAR(30) NOT NULL,
+    -> jenis_kelamin ENUM('Laki-Laki', 'Perempuan') NOT NULL,
+    -> Tempat_lahir VARCHAR(30) NOT NULL,
+    -> Tanggal_lahir DATE NOT NULL,
+    -> iddivisi INT NOT NULL,
+    -> idjabatan INT NOT NULL,
+    -> alamat TEXT,
+    -> FOREIGN KEY (iddivisi) REFERENCES divisi(id),
+    -> FOREIGN KEY (idjabatan) REFERENCES jabatan(id));
+Query OK, 0 rows affected (0.024 sec)
+
+8. Tampilkan deskripsi tabel pegawai
+
+MariaDB [dbpegawai2]> DESC pegawai;
++---------------+-------------------------------+------+-----+---------+----------------+
+| Field         | Type                          | Null | Key | Default | Extra          |
++---------------+-------------------------------+------+-----+---------+----------------+
+| id            | int(11)                       | NO   | PRI | NULL    | auto_increment |
+| nip           | char(5)                       | NO   | UNI | NULL    |                |
+| nama          | varchar(30)                   | NO   |     | NULL    |                |
+| jenis_kelamin | enum('Laki-Laki','Perempuan') | NO   |     | NULL    |                |
+| Tempat_lahir  | varchar(30)                   | NO   |     | NULL    |                |
+| Tanggal_lahir | date                          | NO   |     | NULL    |                |
+| iddivisi      | int(11)                       | NO   | MUL | NULL    |                |
+| idjabatan     | int(11)                       | NO   | MUL | NULL    |                |
+| alamat        | text                          | YES  |     | NULL    |                |
++---------------+-------------------------------+------+-----+---------+----------------+
+9 rows in set (0.015 sec)
+
+9. Tampilkan tabel-tabel yang ada di dbpegawai
+
+MariaDB [dbpegawai2]> SHOW TABLES;
++----------------------+
+| Tables_in_dbpegawai2 |
++----------------------+
+| divisi               |
+| jabatan              |
+| pegawai              |
++----------------------+
+3 rows in set (0.001 sec)
+
+10. Input data divisi => SDM, Keuangan, Marketing, IT
+
+MariaDB [dbpegawai2]> INSERT INTO divisi (nama) VALUES ('SDM'),
+('Keuangan'), ('Marketing'), ('IT');
+Query OK, 4 rows affected (0.043 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+11. Tampilkan seluruh data divisi
+
+MariaDB [dbpegawai2]> SELECT * FROM divisi;
++----+-----------+
+| id | nama      |
++----+-----------+
+|  4 | IT        |
+|  2 | Keuangan  |
+|  3 | Marketing |
+|  1 | SDM       |
++----+-----------+
+4 rows in set (0.001 sec)
+
+12. Input data jabatan => Direktur, Manajer, Asisten Manajer, Staff
+
+MariaDB [dbpegawai2]> INSERT INTO jabatan (nama) VALUES ('Direkt
+ur'), ('Manajer'), ('Asisten Manajer'), ('Staff');
+Query OK, 4 rows affected (0.007 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+13. Tampilkan seluruh data jabatan 
+
+MariaDB [dbpegawai2]> SELECT * FROM jabatan;
++----+-----------------+
+| id | nama            |
++----+-----------------+
+|  3 | Asisten Manajer |
+|  1 | Direktur        |
+|  2 | Manajer         |
+|  4 | Staff           |
++----+-----------------+
+4 rows in set (0.001 sec)
+
+14. Input 20 orang pegawai ( 1 divisi 5 orang, untuk gender dan jabatan diacak)
+
+MariaDB [dbpegawai2]> INSERT INTO divisi (nama) VALUES
+    -> ('Divisi 1'),
+    -> ('Divisi 2'),
+    -> ('Divisi 3'),
+    -> ('Divisi 4');
+Query OK, 4 rows affected (0.006 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+MariaDB [dbpegawai2]> INSERT INTO pegawai (nip, nama, jenis_kelamin, tempat_lahir, tanggal_lahir, iddivisi, idjabatan, alamat) VALUES
+    -> ('NIP01', 'Alika', 'Perempuan', 'Jakarta','2000-05-15', 1, 1, 'Tanjung barat'),
+    -> ('NIP02', 'Muhammad ikhsan', 'Laki-Laki', 'Jakarta','
+1988-04-1', 1, 2, 'Depok'),
+    -> ('NIP03', 'Santos Santoso', 'Laki-Laki', 'Bandung', '
+1992-02-10', 1, 3, 'Bogor'),
+    -> ('NIP04', 'Sutarsono', 'Laki-Laki', 'Solo', '1995-07-
+25', 1, 4, 'Cileungsi'),
+    -> ('NIP05', 'Alvina Putri', 'Perempuan', 'Lampung', '19
+93-11-30', 1, 3, 'Tanjung Priuk');
+Query OK, 5 rows affected (0.008 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai2]> INSERT INTO pegawai (nip, nama, jenis_kelamin, tempat_lahir, tanggal_lahir, iddivisi, idjabatan, alamat) VALUES
+    -> ('NIP06', 'Arya Abdillah', 'Laki-Laki', 'Bandung', '1
+991-08-17', 2, 1, 'Tamansari'),
+    -> ('NIP07', 'Agnes Zahira', 'Perempuan', 'Jakarta', '19
+89-04-22', 2, 3, 'Cijeruk'),
+    -> ('NIP08', 'Muhammad Rizwan', 'Laki-Laki', 'Bogor', '1
+993-01-11', 2, 3, 'Jasinga'),
+    -> ('NIP09', 'Miana', 'Perempuan', 'Kebumen', '1994-06-2
+9', 2, 4, 'Ciapus'),
+    -> ('NIP10', 'Amalia', 'Perempuan', 'Jakarta', '1990-12-
+03', 2, 1, 'Ci curug');
+Query OK, 5 rows affected (0.007 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai2]> INSERT INTO pegawai (nip, nama, jenis_kelamin, tempat_lahir, tanggal_lahir, iddivisi, idjabatan, alamat) VALUES
+    -> ('NIP11', 'Saepudin', 'Laki-Laki', 'Depok', '1988-08-
+03', 3, 1, 'Bojong Gede'),
+    -> ('NIP12', 'Asep arwana', 'Laki-Laki', 'Cianjur', '199
+2-10-14', 3, 2, 'cimahpar'),
+    -> ('NIP13', 'Putri', 'Perempuan', 'Purwokerto', '2000-0
+5-20', 3, 3, 'Laladon'),
+    -> ('NIP14', 'Ikhsan', 'Laki-Laki', 'Jakarta', '1993,09-
+15', 3, 4, 'Cibinong'),
+    -> ('NIP15', 'Nesya Rahma', 'Perempuan', 'Brebes', '2001
+-07-01', 3, 2, 'Depok');
+Query OK, 5 rows affected (0.006 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai2]> INSERT INTO pegawai (nip, nama, jenis_kelamin, tempat_lahir, tanggal_lahir, iddivisi, idjabatan, alamat) VALUES
+    -> ('NIP16', 'Isnaeni', 'Perempuan', 'Surabaya', '1989-1
+1-12', 4, 1, 'Tamansari'),
+    -> ('NIP17','Aryo Permana', 'Laki-Laki', 'Yogyakarta', '
+1994-02-27', 4, 2, 'Dramaga'),
+    -> ('NIP18', 'Abdul Mustofa', 'Laki-Laki', 'Solo', '1992
+-04-05', 4, 3, 'Leuwiliang'),
+    -> ('NIP19', 'Farah sifa', 'Perempuan', 'Bandung', '2002
+-08-22', 4, 4, 'Citeureup'),
+    -> ('NIP20', 'Supardi', 'Laki-laki', 'Lampung', '1991-01
+-05', 4, 3, 'Rumpin');
+Query OK, 5 rows affected (0.031 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+15. Tampilkan seluruh data pegawai
+
+MariaDB [dbpegawai2]> SELECT * FROM pegawai;
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+---------------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat        |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+---------------+
+|  1 | NIP01 | Alika           | Perempuan     | Jakarta      | 2000-05-15    |        1 |         1 | Tanjung barat |
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok         |
+|  3 | NIP03 | Santos Santoso  | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor         |
+|  4 | NIP04 | Sutarsono       | Laki-Laki     | Solo         | 1995-07-25    |        1 |         4 | Cileungsi     |
+|  5 | NIP05 | Alvina Putri    | Perempuan     | Lampung      | 1993-11-30    |        1 |         3 | Tanjung Priuk |
+|  6 | NIP06 | Arya Abdillah   | Laki-Laki     | Bandung      | 1991-08-17    |        2 |         1 | Tamansari     |
+|  7 | NIP07 | Agnes Zahira    | Perempuan     | Jakarta      | 1989-04-22    |        2 |         3 | Cijeruk       |
+|  8 | NIP08 | Muhammad Rizwan | Laki-Laki     | Bogor        | 1993-01-11    |        2 |         3 | Jasinga       |
+|  9 | NIP09 | Miana           | Perempuan     | Kebumen      | 1994-06-29    |        2 |         4 | Ciapus        |
+| 10 | NIP10 | Amalia          | Perempuan     | Jakarta      | 1990-12-03    |        2 |         1 | Ci curug      |
+| 11 | NIP11 | Saepudin        | Laki-Laki     | Depok        | 1988-08-03    |        3 |         1 | Bojong Gede   |
+| 12 | NIP12 | Asep arwana     | Laki-Laki     | Cianjur      | 1992-10-14    |        3 |         2 | cimahpar      |
+| 13 | NIP13 | Putri           | Perempuan     | Purwokerto   | 2000-05-20    |        3 |         3 | Laladon       |
+| 14 | NIP14 | Ikhsan          | Laki-Laki     | Jakarta      | 1993-09-15    |        3 |         4 | Cibinong      |
+| 15 | NIP15 | Nesya Rahma     | Perempuan     | Brebes       | 2001-07-01    |        3 |         2 | Depok         |
+| 16 | NIP16 | Isnaeni         | Perempuan     | Surabaya     | 1989-11-12    |        4 |         1 | Tamansari     |
+| 17 | NIP17 | Aryo Permana    | Laki-Laki     | Yogyakarta   | 1994-02-27    |        4 |         2 | Dramaga       |
+| 18 | NIP18 | Abdul Mustofa   | Laki-Laki     | Solo         | 1992-04-05    |        4 |         3 | Leuwiliang    |
+| 19 | NIP19 | Farah sifa      | Perempuan     | Bandung      | 2002-08-22    |        4 |         4 | Citeureup     |
+| 20 | NIP20 | Supardi         | Laki-Laki     | Lampung      | 1991-01-05    |        4 |         3 | Rumpin        |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+---------------+
+20 rows in set (0.001 sec)
+
+16. Ubah data 5 orang pegawai (dengan ketentuan ubah 3 kolom(bebas))
+
+MariaDB [dbpegawai2]> UPDATE pegawai
+    -> SET nama = CASE
+    -> WHEN id = 1 THEN 'Aisyah'
+    -> WHEN id = 5 THEN 'Alvina'
+    -> WHEN id = 7 THEN 'Dara raihana'
+    -> WHEN id = 10 THEN 'Aulia mandaia'
+    -> WHEN id = 13 THEN 'Putri salma'
+    -> ELSE nama
+    -> END,
+    -> alamat = CASE
+    -> WHEN id = 1 THEN 'Margonda'
+    -> WHEN id = 5 THEN 'Dramaga'
+    -> WHEN id = 7 THEN 'Curug nangka'
+    -> WHEN id = 10 THEN 'Cibeureum'
+    -> WHEN id = 13 THEN 'Buniaga'
+    -> ELSE alamat
+    -> END,
+    -> jenis_kelamin = 'perempuan'
+    -> WHERE id IN (1,5,7,10,13);
+Query OK, 5 rows affected (0.006 sec)
+Rows matched: 5  Changed: 5  Warnings: 0
+
+17. Hapus 2 orang pegawai pegawai terakhir
+
+MariaDB [dbpegawai2]> DELETE FROM pegawai ORDER BY id DESC L
+IMIT 2;
+Query OK, 2 rows affected (0.006 sec)
+
+MariaDB [dbpegawai2]> SELECT * FROM pegawai;
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat       |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+
+|  1 | NIP01 | Aisyah          | Perempuan     | Jakarta      | 2000-05-15    |        1 |         1 | Margonda     |
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok        |
+|  3 | NIP03 | Santos Santoso  | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor        |
+|  4 | NIP04 | Sutarsono       | Laki-Laki     | Solo         | 1995-07-25    |        1 |         4 | Cileungsi    |
+|  5 | NIP05 | Alvina          | Perempuan     | Lampung      | 1993-11-30    |        1 |         3 | Dramaga      |
+|  6 | NIP06 | Arya Abdillah   | Laki-Laki     | Bandung      | 1991-08-17    |        2 |         1 | Tamansari    |
+|  7 | NIP07 | Dara raihana    | Perempuan     | Jakarta      | 1989-04-22    |        2 |         3 | Curug nangka |
+|  8 | NIP08 | Muhammad Rizwan | Laki-Laki     | Bogor        | 1993-01-11    |        2 |         3 | Jasinga      |
+|  9 | NIP09 | Miana           | Perempuan     | Kebumen      | 1994-06-29    |        2 |         4 | Ciapus       |
+| 10 | NIP10 | Aulia mandaia   | Perempuan     | Jakarta      | 1990-12-03    |        2 |         1 | Cibeureum    |
+| 11 | NIP11 | Saepudin        | Laki-Laki     | Depok        | 1988-08-03    |        3 |         1 | Bojong Gede  |
+| 12 | NIP12 | Asep arwana     | Laki-Laki     | Cianjur      | 1992-10-14    |        3 |         2 | cimahpar     |
+| 13 | NIP13 | Putri salma     | Perempuan     | Purwokerto   | 2000-05-20    |        3 |         3 | Buniaga      |
+| 14 | NIP14 | Ikhsan          | Laki-Laki     | Jakarta      | 1993-09-15    |        3 |         4 | Cibinong     |
+| 15 | NIP15 | Nesya Rahma     | Perempuan     | Brebes       | 2001-07-01    |        3 |         2 | Depok        |
+| 16 | NIP16 | Isnaeni         | Perempuan     | Surabaya     | 1989-11-12    |        4 |         1 | Tamansari    |
+| 17 | NIP17 | Aryo Permana    | Laki-Laki     | Yogyakarta   | 1994-02-27    |        4 |         2 | Dramaga      |
+| 18 | NIP18 | Abdul Mustofa   | Laki-Laki     | Solo         | 1992-04-05    |        4 |         3 | Leuwiliang   |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+
+18 rows in set (0.000 sec)
+
+18. Gunakan alter tabel pada tabel pegawai untuk menambahkan kolom baru berat_badan dengan
+tipe data float wajib diisi, lalu input berat badan semua pegawai secara acak
+
+MariaDB [dbpegawai2]> ALTER TABLE pegawai
+    -> ADD COLUMN berat_badan FLOAT NOT NULL;
+Query OK, 0 rows affected (0.014 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai2]> UPDATE pegawai
+    -> SET berat_badan = RAND() * (100 - 50) + 50;
+Query OK, 18 rows affected (0.007 sec)
+Rows matched: 18  Changed: 18  Warnings: 0
+
+MariaDB [dbpegawai2]> SELECT * FROM pegawai;
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat       | berat_badan |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+
+|  1 | NIP01 | Aisyah          | Perempuan     | Jakarta      | 2000-05-15    |        1 |         1 | Margonda     |     86.2582 |
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok        |     77.5527 |
+|  3 | NIP03 | Santos Santoso  | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor        |      78.989 |
+|  4 | NIP04 | Sutarsono       | Laki-Laki     | Solo         | 1995-07-25    |        1 |         4 | Cileungsi    |      62.287 |
+|  5 | NIP05 | Alvina          | Perempuan     | Lampung      | 1993-11-30    |        1 |         3 | Dramaga      |     74.4677 |
+|  6 | NIP06 | Arya Abdillah   | Laki-Laki     | Bandung      | 1991-08-17    |        2 |         1 | Tamansari    |     85.4775 |
+|  7 | NIP07 | Dara raihana    | Perempuan     | Jakarta      | 1989-04-22    |        2 |         3 | Curug nangka |     53.9847 |
+|  8 | NIP08 | Muhammad Rizwan | Laki-Laki     | Bogor        | 1993-01-11    |        2 |         3 | Jasinga      |     63.4907 |
+|  9 | NIP09 | Miana           | Perempuan     | Kebumen      | 1994-06-29    |        2 |         4 | Ciapus       |     55.4993 |
+| 10 | NIP10 | Aulia mandaia   | Perempuan     | Jakarta      | 1990-12-03    |        2 |         1 | Cibeureum    |     87.0246 |
+| 11 | NIP11 | Saepudin        | Laki-Laki     | Depok        | 1988-08-03    |        3 |         1 | Bojong Gede  |     68.6252 |
+| 12 | NIP12 | Asep arwana     | Laki-Laki     | Cianjur      | 1992-10-14    |        3 |         2 | cimahpar     |     82.0523 |
+| 13 | NIP13 | Putri salma     | Perempuan     | Purwokerto   | 2000-05-20    |        3 |         3 | Buniaga      |     54.3857 |
+| 14 | NIP14 | Ikhsan          | Laki-Laki     | Jakarta      | 1993-09-15    |        3 |         4 | Cibinong     |     75.7715 |
+| 15 | NIP15 | Nesya Rahma     | Perempuan     | Brebes       | 2001-07-01    |        3 |         2 | Depok        |     65.7007 |
+| 16 | NIP16 | Isnaeni         | Perempuan     | Surabaya     | 1989-11-12    |        4 |         1 | Tamansari    |     51.1887 |
+| 17 | NIP17 | Aryo Permana    | Laki-Laki     | Yogyakarta   | 1994-02-27    |        4 |         2 | Dramaga      |     58.8415 |
+| 18 | NIP18 | Abdul Mustofa   | Laki-Laki     | Solo         | 1992-04-05    |        4 |         3 | Leuwiliang   |     90.6412 |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+
+18 rows in set (0.000 sec)
+
+19. Gunakan alter tabel pada tabel pegawai untuk menambahkan kolom baru umur dengan tipe data
+integer wajib diisi, lalu input umur semua pegawai secara acak
+
+MariaDB [dbpegawai2]> ALTER TABLE pegawai ADD COLUMN umur IN
+T NOT NULL;
+Query OK, 0 rows affected (0.012 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai2]> UPDATE pegawai SET umur = YEAR(NOW())
+- YEAR(tanggal_lahir);
+Query OK, 18 rows affected (0.006 sec)
+Rows matched: 18  Changed: 18  Warnings: 0
+
+MariaDB [dbpegawai2]> SELECT * FROM pegawai;
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat       | berat_badan | umur |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+|  1 | NIP01 | Aisyah          | Perempuan     | Jakarta      | 2000-05-15    |        1 |         1 | Margonda     |     86.2582 |   24 |
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok        |     77.5527 |   36 |
+|  3 | NIP03 | Santos Santoso  | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor        |      78.989 |   32 |
+|  4 | NIP04 | Sutarsono       | Laki-Laki     | Solo         | 1995-07-25    |        1 |         4 | Cileungsi    |      62.287 |   29 |
+|  5 | NIP05 | Alvina          | Perempuan     | Lampung      | 1993-11-30    |        1 |         3 | Dramaga      |     74.4677 |   31 |
+|  6 | NIP06 | Arya Abdillah   | Laki-Laki     | Bandung      | 1991-08-17    |        2 |         1 | Tamansari    |     85.4775 |   33 |
+|  7 | NIP07 | Dara raihana    | Perempuan     | Jakarta      | 1989-04-22    |        2 |         3 | Curug nangka |     53.9847 |   35 |
+|  8 | NIP08 | Muhammad Rizwan | Laki-Laki     | Bogor        | 1993-01-11    |        2 |         3 | Jasinga      |     63.4907 |   31 |
+|  9 | NIP09 | Miana           | Perempuan     | Kebumen      | 1994-06-29    |        2 |         4 | Ciapus       |     55.4993 |   30 |
+| 10 | NIP10 | Aulia mandaia   | Perempuan     | Jakarta      | 1990-12-03    |        2 |         1 | Cibeureum    |     87.0246 |   34 |
+| 11 | NIP11 | Saepudin        | Laki-Laki     | Depok        | 1988-08-03    |        3 |         1 | Bojong Gede  |     68.6252 |   36 |
+| 12 | NIP12 | Asep arwana     | Laki-Laki     | Cianjur      | 1992-10-14    |        3 |         2 | cimahpar     |     82.0523 |   32 |
+| 13 | NIP13 | Putri salma     | Perempuan     | Purwokerto   | 2000-05-20    |        3 |         3 | Buniaga      |     54.3857 |   24 |
+| 14 | NIP14 | Ikhsan          | Laki-Laki     | Jakarta      | 1993-09-15    |        3 |         4 | Cibinong     |     75.7715 |   31 |
+| 15 | NIP15 | Nesya Rahma     | Perempuan     | Brebes       | 2001-07-01    |        3 |         2 | Depok        |     65.7007 |   23 |
+| 16 | NIP16 | Isnaeni         | Perempuan     | Surabaya     | 1989-11-12    |        4 |         1 | Tamansari    |     51.1887 |   35 |
+| 17 | NIP17 | Aryo Permana    | Laki-Laki     | Yogyakarta   | 1994-02-27    |        4 |         2 | Dramaga      |     58.8415 |   30 |
+| 18 | NIP18 | Abdul Mustofa   | Laki-Laki     | Solo         | 1992-04-05    |        4 |         3 | Leuwiliang   |     90.6412 |   32 |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+18 rows in set (0.001 sec)
+
+21. Tampilkan kolom2 tertentu di tabel pegawai (nip,nama,jenis_kelamin,alamat) 
+ 
+MariaDB [dbpegawai2]> SELECT nip, nama, jenis_kelamin, alama
+r
+    -> FROM pegawai;
+ERROR 1054 (42S22): Unknown column 'alamar' in 'field list'
+MariaDB [dbpegawai2]> SELECT nip, nama, jenis_kelamin, alamat
+    -> FROM pegawai;
++-------+-----------------+---------------+--------------+
+| nip   | nama            | jenis_kelamin | alamat       |
++-------+-----------------+---------------+--------------+
+| NIP01 | Aisyah          | Perempuan     | Margonda     |
+| NIP02 | Muhammad ikhsan | Laki-Laki     | Depok        |
+| NIP03 | Santos Santoso  | Laki-Laki     | Bogor        |
+| NIP04 | Sutarsono       | Laki-Laki     | Cileungsi    |
+| NIP05 | Alvina          | Perempuan     | Dramaga      |
+| NIP06 | Arya Abdillah   | Laki-Laki     | Tamansari    |
+| NIP07 | Dara raihana    | Perempuan     | Curug nangka |
+| NIP08 | Muhammad Rizwan | Laki-Laki     | Jasinga      |
+| NIP09 | Miana           | Perempuan     | Ciapus       |
+| NIP10 | Aulia mandaia   | Perempuan     | Cibeureum    |
+| NIP11 | Saepudin        | Laki-Laki     | Bojong Gede  |
+| NIP12 | Asep arwana     | Laki-Laki     | cimahpar     |
+| NIP13 | Putri salma     | Perempuan     | Buniaga      |
+| NIP14 | Ikhsan          | Laki-Laki     | Cibinong     |
+| NIP15 | Nesya Rahma     | Perempuan     | Depok        |
+| NIP16 | Isnaeni         | Perempuan     | Tamansari    |
+| NIP17 | Aryo Permana    | Laki-Laki     | Dramaga      |
+| NIP18 | Abdul Mustofa   | Laki-Laki     | Leuwiliang   |
++-------+-----------------+---------------+--------------+
+18 rows in set (0.000 sec)
+
+22. Tampilkan baris2 tertentu di tabel pegawai (yang gendernya laki2 saja)
+
+MariaDB [dbpegawai2]> SELECT *
+    -> FROM pegawai
+    -> WHERE jenis_kelamin = 'Laki-Laki';
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-------------+-------------+------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat      | berat_badan | umur |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-------------+-------------+------+
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok       |     77.5527 |   36 |
+|  3 | NIP03 | Santos Santoso  | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor       |      78.989 |   32 |
+|  4 | NIP04 | Sutarsono       | Laki-Laki     | Solo         | 1995-07-25    |        1 |         4 | Cileungsi   |      62.287 |   29 |
+|  6 | NIP06 | Arya Abdillah   | Laki-Laki     | Bandung      | 1991-08-17    |        2 |         1 | Tamansari   |     85.4775 |   33 |
+|  8 | NIP08 | Muhammad Rizwan | Laki-Laki     | Bogor        | 1993-01-11    |        2 |         3 | Jasinga     |     63.4907 |   31 |
+| 11 | NIP11 | Saepudin        | Laki-Laki     | Depok        | 1988-08-03    |        3 |         1 | Bojong Gede |     68.6252 |   36 |
+| 12 | NIP12 | Asep arwana     | Laki-Laki     | Cianjur      | 1992-10-14    |        3 |         2 | cimahpar    |     82.0523 |   32 |
+| 14 | NIP14 | Ikhsan          | Laki-Laki     | Jakarta      | 1993-09-15    |        3 |         4 | Cibinong    |     75.7715 |   31 |
+| 17 | NIP17 | Aryo Permana    | Laki-Laki     | Yogyakarta   | 1994-02-27    |        4 |         2 | Dramaga     |     58.8415 |   30 |
+| 18 | NIP18 | Abdul Mustofa   | Laki-Laki     | Solo         | 1992-04-05    |        4 |         3 | Leuwiliang  |     90.6412 |   32 |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-------------+-------------+------+
+10 rows in set (0.001 sec)
+
+23. Tampilkan baris2 tertentu di tabel pegawai (yang bekerja di divisi IT dan gendernya perempuan)
+
+MariaDB [dbpegawai2]> SELECT *
+    -> FROM pegawai
+    -> WHERE umur > 30 AND tempat_lahir = 'Jakarta';
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat       | berat_badan | umur |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok        |     77.5527 |   36 |
+|  7 | NIP07 | Dara raihana    | Perempuan     | Jakarta      | 1989-04-22    |        2 |         3 | Curug nangka |     53.9847 |   35 |
+| 10 | NIP10 | Aulia mandaia   | Perempuan     | Jakarta      | 1990-12-03    |        2 |         1 | Cibeureum    |     87.0246 |   34 |
+| 14 | NIP14 | Ikhsan          | Laki-Laki     | Jakarta      | 1993-09-15    |        3 |         4 | Cibinong     |     75.7715 |   31 |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+4 rows in set (0.004 sec)
+
+25. Tampilkan data pegawai yang bekerja pada divisi marketing, berumur lebih dari 30 tahun dan
+berjenis kelamin perempuan dengan klausa WHERE, AND
+
+MariaDB [dbpegawai2]> SELECT *
+    -> FROM pegawai
+    -> WHERE iddivisi = (SELECT id FROM divisi WHERE nama =
+'Marketing')
+    -> AND umur > 30
+    -> AND jenis_kelamin = 'Perempuan';
+Empty set (0.001 sec)
+
+27. Tampilkan data pegawai dengan klausa non key (gender)
+
+MariaDB [dbpegawai2]> SELECT * FROM pegawai WHERE jenis_kela
+min = 'Laki-Laki';
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-------------+-------------+------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat      | berat_badan | umur |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-------------+-------------+------+
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok       |     77.5527 |   36 |
+|  3 | NIP03 | Santos Santoso  | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor       |      78.989 |   32 |
+|  4 | NIP04 | Sutarsono       | Laki-Laki     | Solo         | 1995-07-25    |        1 |         4 | Cileungsi   |      62.287 |   29 |
+|  6 | NIP06 | Arya Abdillah   | Laki-Laki     | Bandung      | 1991-08-17    |        2 |         1 | Tamansari   |     85.4775 |   33 |
+|  8 | NIP08 | Muhammad Rizwan | Laki-Laki     | Bogor        | 1993-01-11    |        2 |         3 | Jasinga     |     63.4907 |   31 |
+| 11 | NIP11 | Saepudin        | Laki-Laki     | Depok        | 1988-08-03    |        3 |         1 | Bojong Gede |     68.6252 |   36 |
+| 12 | NIP12 | Asep arwana     | Laki-Laki     | Cianjur      | 1992-10-14    |        3 |         2 | cimahpar    |     82.0523 |   32 |
+| 14 | NIP14 | Ikhsan          | Laki-Laki     | Jakarta      | 1993-09-15    |        3 |         4 | Cibinong    |     75.7715 |   31 |
+| 17 | NIP17 | Aryo Permana    | Laki-Laki     | Yogyakarta   | 1994-02-27    |        4 |         2 | Dramaga     |     58.8415 |   30 |
+| 18 | NIP18 | Abdul Mustofa   | Laki-Laki     | Solo         | 1992-04-05    |        4 |         3 | Leuwiliang  |     90.6412 |   32 |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-------------+-------------+------+
+10 rows in set (0.001 sec)
+
+28. Tampilkan data pegawai dengan klausa in (menyebutkan beberapa nip) 
+
+MariaDB [dbpegawai2]> SELECT * FROM pegawai WHERE nip IN ('N
+IP02', 'NIP05', 'NIP10', 'NIP12', 'NIP15');
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-----------+-------------+------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat    | berat_badan | umur |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-----------+-------------+------+
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok     |     77.5527 |   36 |
+|  5 | NIP05 | Alvina          | Perempuan     | Lampung      | 1993-11-30    |        1 |         3 | Dramaga   |     74.4677 |   31 |
+| 10 | NIP10 | Aulia mandaia   | Perempuan     | Jakarta      | 1990-12-03    |        2 |         1 | Cibeureum |     87.0246 |   34 |
+| 12 | NIP12 | Asep arwana     | Laki-Laki     | Cianjur      | 1992-10-14    |        3 |         2 | cimahpar  |     82.0523 |   32 |
+| 15 | NIP15 | Nesya Rahma     | Perempuan     | Brebes       | 2001-07-01    |        3 |         2 | Depok     |     65.7007 |   23 |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-----------+-------------+------+
+5 rows in set (0.001 sec)
+
+29. Tampilkan data pegawai dengan klausa not in (menyebutkan beberapa tempat lahir) 
+
+MariaDB [dbpegawai2]> SELECT * FROM pegawai WHERE tempat_lah
+ir NOT IN ('Jakarta', 'Bogor', 'Solo');
++----+-------+----------------+---------------+--------------+---------------+----------+-----------+-------------+-------------+------+
+| id | nip   | nama           | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat      | berat_badan | umur |
++----+-------+----------------+---------------+--------------+---------------+----------+-----------+-------------+-------------+------+
+|  3 | NIP03 | Santos Santoso | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor       |      78.989 |   32 |
+|  5 | NIP05 | Alvina         | Perempuan     | Lampung      | 1993-11-30    |        1 |         3 | Dramaga     |     74.4677 |   31 |
+|  6 | NIP06 | Arya Abdillah  | Laki-Laki     | Bandung      | 1991-08-17    |        2 |         1 | Tamansari   |     85.4775 |   33 |
+|  9 | NIP09 | Miana          | Perempuan     | Kebumen      | 1994-06-29    |        2 |         4 | Ciapus      |     55.4993 |   30 |
+| 11 | NIP11 | Saepudin       | Laki-Laki     | Depok        | 1988-08-03    |        3 |         1 | Bojong Gede |     68.6252 |   36 |
+| 12 | NIP12 | Asep arwana    | Laki-Laki     | Cianjur      | 1992-10-14    |        3 |         2 | cimahpar    |     82.0523 |   32 |
+| 13 | NIP13 | Putri salma    | Perempuan     | Purwokerto   | 2000-05-20    |        3 |         3 | Buniaga     |     54.3857 |   24 |
+| 15 | NIP15 | Nesya Rahma    | Perempuan     | Brebes       | 2001-07-01    |        3 |         2 | Depok       |     65.7007 |   23 |
+| 16 | NIP16 | Isnaeni        | Perempuan     | Surabaya     | 1989-11-12    |        4 |         1 | Tamansari   |     51.1887 |   35 |
+| 17 | NIP17 | Aryo Permana   | Laki-Laki     | Yogyakarta   | 1994-02-27    |        4 |         2 | Dramaga     |     58.8415 |   30 |
++----+-------+----------------+---------------+--------------+---------------+----------+-----------+-------------+-------------+------+
+10 rows in set (0.001 sec)
+
+30. Tampilkan data pegawai berdasarkan nama secara ascending
+ 
+MariaDB [dbpegawai2]> SELECT * FROM pegawai ORDER BY nama AS
+C;
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat       | berat_badan | umur |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+| 18 | NIP18 | Abdul Mustofa   | Laki-Laki     | Solo         | 1992-04-05    |        4 |         3 | Leuwiliang   |     90.6412 |   32 |
+|  1 | NIP01 | Aisyah          | Perempuan     | Jakarta      | 2000-05-15    |        1 |         1 | Margonda     |     86.2582 |   24 |
+|  5 | NIP05 | Alvina          | Perempuan     | Lampung      | 1993-11-30    |        1 |         3 | Dramaga      |     74.4677 |   31 |
+|  6 | NIP06 | Arya Abdillah   | Laki-Laki     | Bandung      | 1991-08-17    |        2 |         1 | Tamansari    |     85.4775 |   33 |
+| 17 | NIP17 | Aryo Permana    | Laki-Laki     | Yogyakarta   | 1994-02-27    |        4 |         2 | Dramaga      |     58.8415 |   30 |
+| 12 | NIP12 | Asep arwana     | Laki-Laki     | Cianjur      | 1992-10-14    |        3 |         2 | cimahpar     |     82.0523 |   32 |
+| 10 | NIP10 | Aulia mandaia   | Perempuan     | Jakarta      | 1990-12-03    |        2 |         1 | Cibeureum    |     87.0246 |   34 |
+|  7 | NIP07 | Dara raihana    | Perempuan     | Jakarta      | 1989-04-22    |        2 |         3 | Curug nangka |     53.9847 |   35 |
+| 14 | NIP14 | Ikhsan          | Laki-Laki     | Jakarta      | 1993-09-15    |        3 |         4 | Cibinong     |     75.7715 |   31 |
+| 16 | NIP16 | Isnaeni         | Perempuan     | Surabaya     | 1989-11-12    |        4 |         1 | Tamansari    |     51.1887 |   35 |
+|  9 | NIP09 | Miana           | Perempuan     | Kebumen      | 1994-06-29    |        2 |         4 | Ciapus       |     55.4993 |   30 |
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok        |     77.5527 |   36 |
+|  8 | NIP08 | Muhammad Rizwan | Laki-Laki     | Bogor        | 1993-01-11    |        2 |         3 | Jasinga      |     63.4907 |   31 |
+| 15 | NIP15 | Nesya Rahma     | Perempuan     | Brebes       | 2001-07-01    |        3 |         2 | Depok        |     65.7007 |   23 |
+| 13 | NIP13 | Putri salma     | Perempuan     | Purwokerto   | 2000-05-20    |        3 |         3 | Buniaga      |     54.3857 |   24 |
+| 11 | NIP11 | Saepudin        | Laki-Laki     | Depok        | 1988-08-03    |        3 |         1 | Bojong Gede  |     68.6252 |   36 |
+|  3 | NIP03 | Santos Santoso  | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor        |      78.989 |   32 |
+|  4 | NIP04 | Sutarsono       | Laki-Laki     | Solo         | 1995-07-25    |        1 |         4 | Cileungsi    |      62.287 |   29 |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+18 rows in set (0.001 sec)
+
+31. Tampilkan data pegawai dari yang berat badan paling gemuk ke paling kurus 
+
+MariaDB [dbpegawai2]> SELECT * FROM pegawai ORDER BY berat_b
+adan DESC;
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat       | berat_badan | umur |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+| 18 | NIP18 | Abdul Mustofa   | Laki-Laki     | Solo         | 1992-04-05    |        4 |         3 | Leuwiliang   |     90.6412 |   32 |
+| 10 | NIP10 | Aulia mandaia   | Perempuan     | Jakarta      | 1990-12-03    |        2 |         1 | Cibeureum    |     87.0246 |   34 |
+|  1 | NIP01 | Aisyah          | Perempuan     | Jakarta      | 2000-05-15    |        1 |         1 | Margonda     |     86.2582 |   24 |
+|  6 | NIP06 | Arya Abdillah   | Laki-Laki     | Bandung      | 1991-08-17    |        2 |         1 | Tamansari    |     85.4775 |   33 |
+| 12 | NIP12 | Asep arwana     | Laki-Laki     | Cianjur      | 1992-10-14    |        3 |         2 | cimahpar     |     82.0523 |   32 |
+|  3 | NIP03 | Santos Santoso  | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor        |      78.989 |   32 |
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok        |     77.5527 |   36 |
+| 14 | NIP14 | Ikhsan          | Laki-Laki     | Jakarta      | 1993-09-15    |        3 |         4 | Cibinong     |     75.7715 |   31 |
+|  5 | NIP05 | Alvina          | Perempuan     | Lampung      | 1993-11-30    |        1 |         3 | Dramaga      |     74.4677 |   31 |
+| 11 | NIP11 | Saepudin        | Laki-Laki     | Depok        | 1988-08-03    |        3 |         1 | Bojong Gede  |     68.6252 |   36 |
+| 15 | NIP15 | Nesya Rahma     | Perempuan     | Brebes       | 2001-07-01    |        3 |         2 | Depok        |     65.7007 |   23 |
+|  8 | NIP08 | Muhammad Rizwan | Laki-Laki     | Bogor        | 1993-01-11    |        2 |         3 | Jasinga      |     63.4907 |   31 |
+|  4 | NIP04 | Sutarsono       | Laki-Laki     | Solo         | 1995-07-25    |        1 |         4 | Cileungsi    |      62.287 |   29 |
+| 17 | NIP17 | Aryo Permana    | Laki-Laki     | Yogyakarta   | 1994-02-27    |        4 |         2 | Dramaga      |     58.8415 |   30 |
+|  9 | NIP09 | Miana           | Perempuan     | Kebumen      | 1994-06-29    |        2 |         4 | Ciapus       |     55.4993 |   30 |
+| 13 | NIP13 | Putri salma     | Perempuan     | Purwokerto   | 2000-05-20    |        3 |         3 | Buniaga      |     54.3857 |   24 |
+|  7 | NIP07 | Dara raihana    | Perempuan     | Jakarta      | 1989-04-22    |        2 |         3 | Curug nangka |     53.9847 |   35 |
+| 16 | NIP16 | Isnaeni         | Perempuan     | Surabaya     | 1989-11-12    |        4 |         1 | Tamansari    |     51.1887 |   35 |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+--------------+-------------+------+
+18 rows in set (0.001 sec)
+
+32. Tampilkan data 5 pegawai teratas gunakan klausa limit
+
+MariaDB [dbpegawai2]> SELECT * FROM pegawai LIMIT 5;
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-----------+-------------+------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat    | berat_badan | umur |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-----------+-------------+------+
+|  1 | NIP01 | Aisyah          | Perempuan     | Jakarta      | 2000-05-15    |        1 |         1 | Margonda  |     86.2582 |   24 |
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok     |     77.5527 |   36 |
+|  3 | NIP03 | Santos Santoso  | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor     |      78.989 |   32 |
+|  4 | NIP04 | Sutarsono       | Laki-Laki     | Solo         | 1995-07-25    |        1 |         4 | Cileungsi |      62.287 |   29 |
+|  5 | NIP05 | Alvina          | Perempuan     | Lampung      | 1993-11-30    |        1 |         3 | Dramaga   |     74.4677 |   31 |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+-----------+-------------+------+
+5 rows in set (0.001 sec)
+
+33. Tampilkan data 5 pegawai terbawah gunakan klausa limit offset
+
+MariaDB [dbpegawai2]> SELECT * FROM pegawai ORDER BY id DESC
+ LIMIT 5 OFFSET 15;
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+----------+-------------+------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat   | berat_badan | umur |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+----------+-------------+------+
+|  3 | NIP03 | Santos Santoso  | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor    |      78.989 |   32 |
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok    |     77.5527 |   36 |
+|  1 | NIP01 | Aisyah          | Perempuan     | Jakarta      | 2000-05-15    |        1 |         1 | Margonda |     86.2582 |   24 |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+----------+-------------+------+
+3 rows in set (0.000 sec)
+
+34. Tampilkan jumlah pegawai gunakan fungsi aggregrat count
+MariaDB [dbpegawai2]> SELECT COUNT(*) AS total_pegawai FROM
+pegawai;
++---------------+
+| total_pegawai |
++---------------+
+|            18 |
++---------------+
+1 row in set (0.001 sec)
+
+35.Tampilkan nip,nama pegawai, umur yg paling tua gunakan fungsi aggregrat max (kombinasi
+dengan sub query)
+
+MariaDB [dbpegawai2]> SELECT nip, nama, TIMESTAMPDIFF(YEAR,
+tanggal_lahir, CURDATE()) AS umur
+    -> FROM pegawai
+    -> WHERE tanggal_lahir = (SELECT MAX(tanggal_lahir) FROM
+ pegawai);
++-------+-------------+------+
+| nip   | nama        | umur |
++-------+-------------+------+
+| NIP15 | Nesya Rahma |   22 |
++-------+-------------+------+
+1 row in set (0.002 sec)
+
+37. Tampilkan data rata2 umur pegawai gunakan fungsi aggregrat avg
+
+MariaDB [dbpegawai2]> SELECT  AVG(TIMESTAMPDIFF(YEAR, tangga
+l_lahir, CURDATE())) AS rata_rata_umur FROM pegawai;
++----------------+
+| rata_rata_umur |
++----------------+
+|        30.2778 |
++----------------+
+1 row in set (0.001 sec)
+
+38. Tampilkan jumlah data pegawai yang laki2 dan berumur lebih dari 40 tahun dan berjabatan
+Manajer, gunakan fungsi aggregrat count dan klausa AND
+
+MariaDB [dbpegawai2]> SELECT COUNT(*) AS jumlah_manajer_laki
+_laki
+    -> FROM pegawai
+    -> WHERE jenis_kelamin = 'Laki-Laki' AND TIMESTAMPDIFF(Y
+EAR, tanggal_lahir, CURDATE()) > 40 AND idjabatan =1;
++--------------------------+
+| jumlah_manajer_laki_laki |
++--------------------------+
+|                        0 |
++--------------------------+
+1 row in set (0.001 sec)
+
+39. Tampilkan jumlah data pegawai yang perempuan dan berumur kurang dari 40 tahun dan
+berjabatan Staff, gunakan fungsi aggregrat count dan klausa AND
+
+MariaDB [dbpegawai2]> SELECT COUNT(*) AS jumlah_staff_peremp
+uan
+    -> FROM pegawai
+    -> WHERE jenis_kelamin = 'Perempuan' AND TIMESTAMPDIFF(Y
+EAR, tanggal_lahir, CURDATE()) < 40 AND idjabatan = 2;
++------------------------+
+| jumlah_staff_perempuan |
++------------------------+
+|                      1 |
++------------------------+
+1 row in set (0.001 sec)
+
+40. Tampilkan jumlah data pegawai yang perempuan gunakan fungsi aggregrat count
+
+MariaDB [dbpegawai2]> SELECT COUNT(*) AS jumlah_perempuan
+    -> FROM pegawai
+    -> WHERE jenis_kelamin = 'Perempuan';
++------------------+
+| jumlah_perempuan |
++------------------+
+|                8 |
++------------------+
+1 row in set (0.000 sec)
+ at line 3
+
+41. Tampilkan jumlah pegawai yang bekerja di divisi SDM dengan fungsi aggregrat sum dan klausa
+WHERE
+
+MariaDB [dbpegawai2]> SELECT COUNT(*) AS jumlah_divisi_sdm
+    -> FROM pegawai
+    -> WHERE iddivisi = (SELECT id FROM divisi WHERE nama = 'SDM');
++-------------------+
+| jumlah_divisi_sdm |
++-------------------+
+|                 5 |
++-------------------+
+1 row in set (0.001 sec)
+
+42. Tampilkan jumlah pegawai berdasarkan divisi masing2 menggunakan fungsi aggregrat count
+dan klausa group by
+
+MariaDB [dbpegawai2]> SELECT iddivisi, COUNT(*) AS jumlah_pe
+gawai
+    -> FROM pegawai
+    -> GROUP BY iddivisi;
++----------+----------------+
+| iddivisi | jumlah_pegawai |
++----------+----------------+
+|        1 |              5 |
+|        2 |              5 |
+|        3 |              5 |
+|        4 |              3 |
++----------+----------------+
+4 rows in set (0.001 sec)
+
+43. Tampilkan data jumlah pegawai berdasarkan gender, yg jumlah minimal 10 orang (gunakan
+group by dan having)
+
+MariaDB [dbpegawai2]> SELECT jenis_kelamin, COUNT(*) AS jumlah_pegawai
+    -> FROM pegawai
+    -> GROUP BY jenis_kelamin
+    -> HAVING COUNT(*) >= 10;
++---------------+----------------+
+| jenis_kelamin | jumlah_pegawai |
++---------------+----------------+
+| Laki-Laki     |             10 |
++---------------+----------------+
+1 row in set (0.001 sec)
+
+44. Cari data pegawai yang berawalan kata Muhammad
+ 
+MariaDB [dbpegawai2]> SELECT *
+    -> FROM pegawai
+    -> WHERE nama LIKE 'Muhammad%';
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+---------+-------------+------+
+| id | nip   | nama            | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat  | berat_badan | umur |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+---------+-------------+------+
+|  2 | NIP02 | Muhammad ikhsan | Laki-Laki     | Jakarta      | 1988-04-01    |        1 |         2 | Depok   |     77.5527 |   36 |
+|  8 | NIP08 | Muhammad Rizwan | Laki-Laki     | Bogor        | 1993-01-11    |        2 |         3 | Jasinga |     63.4907 |   31 |
++----+-------+-----------------+---------------+--------------+---------------+----------+-----------+---------+-------------+------+
+2 rows in set (0.001 sec)
+
+45. Cari data pegawai yang berakhiran kata Santoso
+
+MariaDB [dbpegawai2]> SELECT *
+    -> FROM pegawai
+    -> WHERE nama LIKE '%Santoso';
++----+-------+----------------+---------------+--------------+---------------+----------+-----------+--------+-------------+------+
+| id | nip   | nama           | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat | berat_badan | umur |
++----+-------+----------------+---------------+--------------+---------------+----------+-----------+--------+-------------+------+
+|  3 | NIP03 | Santos Santoso | Laki-Laki     | Bandung      | 1992-02-10    |        1 |         3 | Bogor  |      78.989 |   32 |
++----+-------+----------------+---------------+--------------+---------------+----------+-----------+--------+-------------+------+
+1 row in set (0.001 sec)
+
+46. Cari data pegawai yang mengadung kata Asep
+
+MariaDB [(none)]> USE dbpegawai2;
+Database changed
+MariaDB [dbpegawai2]> SELECT *
+    -> FROM pegawai
+    -> WHERE nama LIKE '%Asep%';
++----+-------+-------------+---------------+--------------+---------------+----------+-----------+----------+-------------+------+
+| id | nip   | nama        | jenis_kelamin | Tempat_lahir | Tanggal_lahir | iddivisi | idjabatan | alamat   | berat_badan | umur |
++----+-------+-------------+---------------+--------------+---------------+----------+-----------+----------+-------------+------+
+| 12 | NIP12 | Asep arwana | Laki-Laki     | Cianjur      | 1992-10-14    |        3 |         2 | cimahpar |     82.0523 |   32 |
++----+-------+-------------+---------------+--------------+---------------+----------+-----------+----------+-------------+------+
+1 row in set (0.001 sec)
+
+47. Cari data pegawai yang huruf kelimanya huruf S
+
+MariaDB [dbpegawai2]> SELECT *
+    -> FROM pegawai
+    -> WHERE SUBSTRING(NAMA, 5, 1) = 'S';
+Empty set (0.001 sec)
+
+
